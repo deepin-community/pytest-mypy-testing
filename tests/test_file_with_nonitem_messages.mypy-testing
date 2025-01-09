@@ -1,0 +1,15 @@
+# -*- mode: python; -*-
+# SPDX-FileCopyrightText: David Fritzsche
+# SPDX-License-Identifier: CC0-1.0
+
+import pytest
+
+
+a = 123
+a = "abc"  # mypy error not covered by the test case below
+
+
+@pytest.mark.mypy_testing
+@pytest.mark.xfail
+def mypy_test_xfail_unexpected_note():
+    """Test case that fails due to not covered non-item error above."""
