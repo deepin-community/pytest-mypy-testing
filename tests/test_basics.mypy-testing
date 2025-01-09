@@ -1,0 +1,99 @@
+# -*- mode: python; -*-
+# SPDX-FileCopyrightText: David Fritzsche
+# SPDX-License-Identifier: CC0-1.0
+
+import pytest
+
+
+@pytest.mark.mypy_testing
+def mypy_test_invalid_assignment():
+    foo = "abc"
+    foo = 123  # E: Incompatible types in assignment (expression has type "int", variable has type "str")
+
+
+@pytest.mark.mypy_testing
+def mypy_test_invalid_assignment_with_error_code():
+    foo = "abc"
+    foo = 123  # E: Incompatible types in assignment (expression has type "int", variable has type "str") [assignment]
+
+
+@pytest.mark.xfail
+@pytest.mark.mypy_testing
+def mypy_test_invalid_assignment_with_error_code__message_does_not_match():
+    foo = "abc"
+    foo = 123  # E: Invalid assignment [assignment]
+
+
+@pytest.mark.mypy_testing
+def mypy_test_invalid_assignment_only_error_code():
+    foo = "abc"
+    foo = 123  # E: [assignment]
+
+
+@pytest.mark.xfail
+@pytest.mark.mypy_testing
+def mypy_test_invalid_assignment_only_error_code__error_code_does_not_match():
+    foo = "abc"
+    foo = 123  # E: [baz]
+
+
+@pytest.mark.xfail
+@pytest.mark.mypy_testing
+def mypy_test_invalid_assignment_no_message_and_no_error_code():
+    foo = "abc"
+    foo = 123  # E:
+
+
+@pytest.mark.mypy_testing
+def mypy_test_use_reveal_type():
+    reveal_type(123)  # N: Revealed type is 'Literal[123]?'
+    reveal_type(456)  # R: Literal[456]?
+
+
+@pytest.mark.mypy_testing
+def mypy_test_use_reveal_type__float_var():
+    some_float = 123.03
+    reveal_type(some_float)  # R: builtins.float
+
+
+@pytest.mark.mypy_testing
+def mypy_test_use_reveal_type__int_var():
+    some_int = 123
+    reveal_type(some_int)  # R: builtins.int
+
+
+@pytest.mark.mypy_testing
+def mypy_test_use_reveal_type__int_list_var():
+    some_list = [123]
+    reveal_type(some_list)  # R: builtins.list[builtins.int]
+
+
+@pytest.mark.mypy_testing
+def mypy_test_use_reveal_type__int_list_var__with__inferred_asterisk():
+    some_list = [123]
+    reveal_type(some_list)  # R: builtins.list[builtins.int*]
+
+
+@pytest.mark.mypy_testing
+@pytest.mark.skip("foo")
+def mypy_test_use_skip_marker():
+    reveal_type(123)  # N: Revealed type is 'Literal[123]?'
+    reveal_type(456)  # R: Literal[456]?
+
+
+@pytest.mark.mypy_testing
+@pytest.mark.xfail
+def mypy_test_xfail_wrong_reveal_type():
+    reveal_type(456)  # R: float
+
+
+@pytest.mark.mypy_testing
+@pytest.mark.xfail
+def mypy_test_xfail_missing_note():
+    "nothing"  # N: missing
+
+
+@pytest.mark.mypy_testing
+@pytest.mark.xfail
+def mypy_test_xfail_unexpected_note():
+    reveal_type([])  # unexpected message
